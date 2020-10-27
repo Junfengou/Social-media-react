@@ -2,16 +2,17 @@ const { ApolloServer } = require("apollo-server")
 const mongoose = require("mongoose")
 
 const { MONGODB } = require("./config")
-const Post = require("./models/Post")
 
 const typeDefs = require("./graphql/typeDef")
 const resolvers = require("./graphql/resolvers")
 
  
-
+// context is basically a middleWare used to check if the user is authenticated.
 const server = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    context: ({ req }) => ({ req }) // take the request and forward it
+    
 })
 
 mongoose.connect(MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })

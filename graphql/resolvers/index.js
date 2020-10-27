@@ -1,4 +1,3 @@
-const post = require("./post")
 const postsResolvers = require("./post")
 const userResolvers = require("./user")
 
@@ -8,6 +7,7 @@ module.exports = {
     },
 
     Mutation: {
-        ...userResolvers.Mutation
+        ...userResolvers.Mutation,
+        ...postsResolvers.Mutation
     }
 }
