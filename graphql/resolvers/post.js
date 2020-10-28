@@ -34,6 +34,11 @@ module.exports = {
             const user = checkAuth(context); //check if the user is authenticated
             console.log("user: ", user)
 
+            if(args.body.trim() === "")
+            {
+                throw new Error("Post body must not be empty") // when creating post, body cannot be empty
+            }
+
             const newPost = new Post({
                 body,
                 user: user.indexOf,
