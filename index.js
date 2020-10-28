@@ -1,4 +1,4 @@
-const { ApolloServer } = require("apollo-server")
+const { ApolloServer, PubSub } = require("apollo-server")
 const mongoose = require("mongoose")
 
 const { MONGODB } = require("./config")
@@ -6,12 +6,14 @@ const { MONGODB } = require("./config")
 const typeDefs = require("./graphql/typeDef")
 const resolvers = require("./graphql/resolvers")
 
+
+const pubsub = new PubSub();
  
 // context is basically a middleWare used to check if the user is authenticated.
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req }) => ({ req }) // take the request and forward it
+    context: ({ req }) => ({ req, pubsub }) // take the request and forward it
     
 })
 

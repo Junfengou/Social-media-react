@@ -43,6 +43,10 @@ module.exports = {
             console.log("new post: ",newPost)
 
             const post = await newPost.save();
+
+            context.pubsub.publish('NEW_POST', { //new functionality for subscription to user when they post content
+                newPost: post
+            })
             return post;
         },
 
@@ -64,7 +68,41 @@ module.exports = {
                 throw new Error(err);
             }
            
+        },
+
+        async likePost(_, { postId }, context) {
+            const { username } = checkAuth(context);
+      
+            const post = await Post.findById(postId);
+            if (post) 
+            {
+              if (post.likes.find((like) => like.username === username)) 
+              {
+                // Post already likes, unlike it
+                post.likes = post.likes.filter((like) => like.username !== username); //remove the like
+              } 
+              else 
+              {
+                // adding the like
+                post.likes.push({
+                  username,
+                  createdAt: new Date().toISOString()
+                });
+              }
+      
+              await post.save();
+              return post;
+            } 
+            else
+            {
+                throw new UserInputError('Post not found');
+            } 
         }
-        
+    },
+
+    Subscription: {
+        newPost: {
+            subscribe: (_, __, { pubsub }) => pubsub.asyncIterator('NEW_POST')
+        }
     }
 }
